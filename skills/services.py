@@ -1,5 +1,6 @@
 from skills.models import Skill
 from skills.utils import normalize_skill_query
+from team_finder.constants import SKILL_AUTOCOMPLETE_LIMIT
 
 
 def search_skills(query: str):
@@ -11,5 +12,5 @@ def search_skills(query: str):
     return (
         Skill.objects
         .filter(name__istartswith=query)
-        .order_by("name")[:10]
+        .order_by("name")[:SKILL_AUTOCOMPLETE_LIMIT]
     )
