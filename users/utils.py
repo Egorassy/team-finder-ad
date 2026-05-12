@@ -1,6 +1,9 @@
 import re
 
-from team_finder.constants import PHONE_REGEX, GITHUB_URL_REGEX
+from team_finder.constants import (
+    GITHUB_URL_REGEX,
+    PHONE_REGEX,
+)
 
 
 def normalize_phone(phone: str) -> str:
@@ -13,11 +16,15 @@ def normalize_phone(phone: str) -> str:
 
 
 def is_valid_phone(phone: str) -> bool:
-    return bool(re.match(PHONE_REGEX, phone))
+    return bool(
+        re.match(PHONE_REGEX, phone)
+    )
 
 
 def is_github_url(url: str | None) -> bool:
     if not url:
         return True
 
-    return bool(re.match(GITHUB_URL_REGEX, url))
+    return bool(
+        re.match(GITHUB_URL_REGEX, url)
+    )
