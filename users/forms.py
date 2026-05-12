@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate
 from team_finder.constants import GITHUB_URL_REGEX
 
 from users.models import User
+from users.utils import is_github_url
 
 
 class RegisterForm(forms.ModelForm):
@@ -41,10 +42,7 @@ class UserProfileForm(forms.ModelForm):
     def clean_github_url(self):
         url = self.cleaned_data.get("github_url")
 
-        if not url:
-            return url
-
-        if not re.match(GITHUB_URL_REGEX, url):
+        if not is_github_url(url):
             raise forms.ValidationError("Invalid GitHub URL")
 
         return url

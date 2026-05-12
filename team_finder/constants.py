@@ -8,12 +8,14 @@ DJANGO_DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 TASK_VERSION = config("TASK_VERSION", default="1")
 
 
-# USER VALIDATION RULES
+# USER VALIDATION
 
 USER_NAME_MAX_LENGTH = 124
 USER_SURNAME_MAX_LENGTH = 124
 USER_PHONE_MAX_LENGTH = 12
 USER_ABOUT_MAX_LENGTH = 256
+PHONE_REGEX = r"^(8|\+7)\d{10}$"
+GITHUB_URL_REGEX = r"^https?:\/\/(www\.)?github\.com\/[\w\-\.]+(\/[\w\-\.]+)?\/?$"
 
 
 # PROJECT RULES
