@@ -1,11 +1,9 @@
-import re
-
 from django import forms
-from django.contrib.auth import authenticate
+from django.contrib.auth.forms import PasswordChangeForm, ReadOnlyPasswordHashField
 
-from team_finder.constants import GITHUB_URL_REGEX
 from users.models import User
 from users.utils import (
+    generate_placeholder_phone,
     is_github_url,
     is_valid_phone,
     normalize_phone,
@@ -13,68 +11,77 @@ from users.utils import (
 
 
 class RegisterForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(
+        label="Пароль",
+        widget=forms.PasswordInput,
+    )
 
     class Meta:
         model = User
         fields = ("name", "surname", "email", "password")
+        labels = {
+            "name": "Имя",
+            "surname": "Фамилия",
+            "email": "Email",
+            "password": "Пароль",
+        }
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    email = forms.EmailField(label="Email")
+    password = forms.CharField(
+        label="Пароль",
+        widget=forms.PasswordInput,
+    )
 
     def clean(self):
-        data = super().clean()
+        cleaned_data = super().clean()
 
-        user = authenticate(
-            email=data.get("email"),
-            password=data.get("password"),
-        )
+        email = cleaned_data.get("email")
+        password = cleaned_data.get("password")
 
-        if not user:
-            raise forms.ValidationError(
-                "Неверный email или пароль"
-            )
+        user = User.objects.filter(email=email).first()
+        if user is None or not user.check_password(password):
+            raise forms.ValidationError("Неверный email или пароль")
 
-        data["user"] = user
-
-        return data
+        user.backend = "django.contrib.auth.backends.ModelBackend"
+        cleaned_data["user"] = user
+        return cleaned_data
 
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = (
-            "name",
-            "surname",
-            "avatar",
-            "about",
-            "phone",
-            "github_url",
-        )
+        fields = ("name", "surname", "avatar", "about", "phone", "github_url")
+        labels = {
+            "name": "Имя",
+            "surname": "Фамилия",
+            "avatar": "Аватар",
+            "about": "О себе",
+            "phone": "Телефон",
+            "github_url": "Ссылка на GitHub",
+        }
+        widgets = {
+            "about": forms.Textarea(attrs={"rows": 4}),
+        }
 
     def clean_phone(self):
         phone = self.cleaned_data.get("phone")
 
+        if not phone:
+            raise forms.ValidationError("Телефон обязателен")
+
         normalized_phone = normalize_phone(phone)
 
         if not is_valid_phone(normalized_phone):
-            raise forms.ValidationError(
-                "Invalid phone format"
-            )
+            raise forms.ValidationError("Invalid phone format")
 
-        existing_user = (
-            User.objects
-            .exclude(pk=self.instance.pk)
-            .filter(phone=normalized_phone)
-            .exists()
-        )
+        users_queryset = User.objects.all()
+        if self.instance.pk:
+            users_queryset = users_queryset.exclude(pk=self.instance.pk)
 
-        if existing_user:
-            raise forms.ValidationError(
-                "Phone already exists"
-            )
+        if users_queryset.filter(phone=normalized_phone).exists():
+            raise forms.ValidationError("Phone already exists")
 
         return normalized_phone
 
@@ -82,8 +89,80 @@ class UserProfileForm(forms.ModelForm):
         url = self.cleaned_data.get("github_url")
 
         if not is_github_url(url):
-            raise forms.ValidationError(
-                "Invalid GitHub URL"
-            )
+            raise forms.ValidationError("Invalid GitHub URL")
 
         return url
+
+
+class ChangePasswordForm(PasswordChangeForm):
+    pass
+
+
+class AdminUserCreationForm(forms.ModelForm):
+    password1 = forms.CharField(
+        label="Пароль",
+        widget=forms.PasswordInput,
+    )
+    password2 = forms.CharField(
+        label="Подтвердите пароль",
+        widget=forms.PasswordInput,
+    )
+
+    class Meta:
+        model = User
+        fields = ("email", "name", "surname")
+        labels = {
+            "email": "Email",
+            "name": "Имя",
+            "surname": "Фамилия",
+        }
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+
+        return password2
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.phone = generate_placeholder_phone()
+        user.set_password(self.cleaned_data["password1"])
+
+        if commit:
+            user.save()
+
+        return user
+
+
+class AdminUserChangeForm(forms.ModelForm):
+    password = ReadOnlyPasswordHashField(label="Пароль")
+
+    class Meta:
+        model = User
+        fields = (
+            "email",
+            "name",
+            "surname",
+            "avatar",
+            "phone",
+            "github_url",
+            "about",
+            "password",
+            "is_active",
+            "is_staff",
+            "is_superuser",
+            "groups",
+            "user_permissions",
+        )
+        labels = {
+            "email": "Email",
+            "name": "Имя",
+            "surname": "Фамилия",
+            "avatar": "Аватар",
+            "phone": "Телефон",
+            "github_url": "Ссылка на GitHub",
+            "about": "О себе",
+        }

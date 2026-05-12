@@ -1,13 +1,11 @@
 from pathlib import Path
 from decouple import config
 
-from team_finder.constants import DJANGO_DEBUG, TASK_VERSION
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("DJANGO_SECRET_KEY")
 
-DEBUG = DJANGO_DEBUG
+DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -16,12 +14,18 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "django.contrib.admin",
+    "users.apps.UsersConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "users.apps.UsersConfig",
+    "projects.apps.ProjectsConfig",
+    "skills.apps.SkillsConfig",
 ]
+
+AUTH_USER_MODEL = "users.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -38,7 +42,9 @@ ROOT_URLCONF = "team_finder.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / f"templates_var{TASK_VERSION}"],
+        "DIRS": [
+            BASE_DIR / f"templates_var{config('TASK_VERSION', default='1')}"
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

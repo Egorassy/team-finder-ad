@@ -1,12 +1,23 @@
 from django.contrib.auth.base_user import BaseUserManager
 
+from users.utils import generate_placeholder_phone, normalize_phone
+
 
 class UserManager(BaseUserManager):
+    use_in_migrations = True
+
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError("Email is required")
 
         email = self.normalize_email(email)
+
+        phone = extra_fields.get("phone")
+        if phone:
+            extra_fields["phone"] = normalize_phone(phone)
+        else:
+            extra_fields["phone"] = generate_placeholder_phone()
+
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
