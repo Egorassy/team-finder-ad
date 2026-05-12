@@ -1,5 +1,8 @@
+import re
+
 from django import forms
 from django.contrib.auth import authenticate
+from team_finder.constants import GITHUB_URL_REGEX
 
 from users.models import User
 
@@ -29,3 +32,19 @@ class LoginForm(forms.Form):
 
         data["user"] = user
         return data
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("name", "surname", "avatar", "about", "phone", "github_url")
+
+    def clean_github_url(self):
+        url = self.cleaned_data.get("github_url")
+
+        if not url:
+            return url
+
+        if not re.match(GITHUB_URL_REGEX, url):
+            raise forms.ValidationError("Invalid GitHub URL")
+
+        return url

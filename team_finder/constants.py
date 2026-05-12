@@ -14,6 +14,7 @@ USER_NAME_MAX_LENGTH = 124
 USER_SURNAME_MAX_LENGTH = 124
 USER_PHONE_MAX_LENGTH = 12
 USER_ABOUT_MAX_LENGTH = 256
+GITHUB_URL_REGEX = r'^https?:\/\/(www\.)?github\.com\/[\w\-\.]+(\/[\w\-\.]+)?\/?$'
 
 
 # PROJECT RULES
