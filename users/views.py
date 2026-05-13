@@ -11,6 +11,7 @@ from users.forms import (
 from users.models import User
 from users.services import create_user_from_form, update_user_profile
 from users.utils import paginate_queryset
+from team_finder.constants import DEFAULT_ORDERING_ASC
 
 
 def register_view(request):
@@ -68,7 +69,7 @@ def user_detail_view(request, pk):
 
 
 def users_list_view(request):
-    participants_queryset = User.objects.order_by("id")
+    participants_queryset = User.objects.order_by(DEFAULT_ORDERING_ASC)
     page_obj = paginate_queryset(request, participants_queryset)
 
     return render(

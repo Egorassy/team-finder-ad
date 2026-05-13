@@ -6,6 +6,7 @@ from team_finder.constants import (
     PROJECT_STATUS_MAX_LENGTH,
     PROJECT_STATUS_CHOICES,
     PROJECT_STATUS_OPEN,
+    DEFAULT_ORDERING_DESC,
 )
 
 
@@ -42,7 +43,7 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ["-created_at"]
+        ordering = [DEFAULT_ORDERING_DESC]
         verbose_name = "Проект"
         verbose_name_plural = "Проекты"
 

@@ -5,7 +5,7 @@ from decouple import config
 # AUTH / ENV SETTINGS
 
 DJANGO_DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
-TASK_VERSION = config("TASK_VERSION", default="1")
+TASK_VERSION = config("TASK_VERSION", default="3")
 
 
 # USER VALIDATION
