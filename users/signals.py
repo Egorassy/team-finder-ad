@@ -1,11 +1,13 @@
 import io
 import random
 import uuid
+import os
 
 from PIL import Image, ImageDraw, ImageFont
 from django.core.files.base import ContentFile
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.conf import settings
 
 from team_finder.constants import (
     AVATAR_BG_COLORS,
@@ -42,11 +44,15 @@ def _build_avatar_bytes(initial: str) -> bytes:
     )
     draw = ImageDraw.Draw(image)
 
+    font_path = os.path.join(
+        settings.BASE_DIR,
+        "static",
+        "fonts",
+        "Neue_Haas_Grotesk_Display_Pro_75_Bold.otf",
+    )
+
     try:
-        font = ImageFont.truetype(
-            "DejaVuSans-Bold.ttf",
-            AVATAR_TEXT_FONT_SIZE,
-        )
+        font = ImageFont.truetype(font_path, AVATAR_TEXT_FONT_SIZE)
     except OSError:
         font = ImageFont.load_default()
 

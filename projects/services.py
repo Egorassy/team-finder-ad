@@ -37,6 +37,9 @@ def create_project(form, user: User) -> Project:
 
 
 def toggle_participation(project: Project, user: User) -> bool:
+    if project.status == PROJECT_STATUS_CLOSED:
+        raise ValueError("Project is closed")
+
     is_participant = project.participants.filter(pk=user.pk).exists()
 
     if is_participant:

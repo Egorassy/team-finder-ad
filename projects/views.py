@@ -121,14 +121,15 @@ def toggle_participate_view(request, pk):
         return _json_error("Authentication required", HTTPStatus.UNAUTHORIZED)
 
     project = get_object_or_404(Project, pk=pk)
-    participant = toggle_participation(project, request.user)
+    try:
+        participant = toggle_participation(project, request.user)
+    except ValueError:
+        return _json_error("Project is closed", HTTPStatus.BAD_REQUEST)
 
-    return JsonResponse(
-        {
-            "status": "ok",
-            "participant": participant,
-        }
-    )
+    return JsonResponse({
+        "status": "ok",
+        "participant": participant,
+    })
 
 
 @require_POST

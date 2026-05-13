@@ -25,7 +25,7 @@ def register_view(request):
 
     return render(
         request,
-        "includes/users/register.html",
+        "users/register.html",
         {"form": form},
     )
 
