@@ -16,6 +16,11 @@ from team_finder.constants import (
     AVATAR_TEXT_COLOR_DARK,
     AVATAR_TEXT_COLOR_LIGHT,
     AVATAR_TEXT_FONT_SIZE,
+    BRIGHTNESS_RED_WEIGHT,
+    BRIGHTNESS_GREEN_WEIGHT,
+    BRIGHTNESS_BLUE_WEIGHT,
+    BRIGHTNESS_DIVISOR,
+    BRIGHTNESS_THRESHOLD,
 )
 from users.models import User
 
@@ -32,9 +37,14 @@ def _hex_to_rgb(color: str) -> tuple[int, int, int]:
 
 def _get_text_color(background_color: str) -> str:
     red, green, blue = _hex_to_rgb(background_color)
-    brightness = (red * 299 + green * 587 + blue * 114) / 1000
 
-    if brightness >= 140:
+    brightness = (
+        red * BRIGHTNESS_RED_WEIGHT +
+        green * BRIGHTNESS_GREEN_WEIGHT +
+        blue * BRIGHTNESS_BLUE_WEIGHT
+    ) / BRIGHTNESS_DIVISOR
+
+    if brightness >= BRIGHTNESS_THRESHOLD:
         return AVATAR_TEXT_COLOR_DARK
 
     return AVATAR_TEXT_COLOR_LIGHT

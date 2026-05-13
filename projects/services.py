@@ -2,7 +2,10 @@ from django.contrib.auth import get_user_model
 
 from projects.models import Project
 from skills.models import Skill
-from team_finder.constants import PROJECT_STATUS_CLOSED
+from team_finder.constants import (
+    PROJECT_STATUS_CLOSED,
+    PROJECT_CLOSED_ERROR_MESSAGE,
+)
 
 User = get_user_model()
 
@@ -37,8 +40,6 @@ def create_project(form, user: User) -> Project:
 
 
 def toggle_participation(project: Project, user: User) -> bool:
-    if project.status == PROJECT_STATUS_CLOSED:
-        raise ValueError("Project is closed")
 
     is_participant = project.participants.filter(pk=user.pk).exists()
 
@@ -56,7 +57,8 @@ def complete_project(project: Project):
 
 
 def add_skill_to_project(
-    project: Project, skill: Skill
+    project: Project,
+    skill: Skill,
 ) -> tuple[int, bool, bool]:
     created = False
 

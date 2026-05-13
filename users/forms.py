@@ -11,6 +11,14 @@ from users.utils import (
     is_valid_phone,
     normalize_phone,
 )
+from team_finder.constants import (
+    INVALID_PHONE_MESSAGE,
+    PHONE_REQUIRED_MESSAGE,
+    PHONE_EXISTS_MESSAGE,
+    INVALID_GITHUB_URL_MESSAGE,
+    PASSWORDS_DONT_MATCH_MESSAGE,
+    INVALID_LOGIN_CREDENTIALS_MESSAGE,
+)
 
 
 class RegisterForm(forms.ModelForm):
@@ -45,7 +53,7 @@ class LoginForm(forms.Form):
 
         user = User.objects.filter(email=email).first()
         if user is None or not user.check_password(password):
-            raise forms.ValidationError("Неверный email или пароль")
+            raise forms.ValidationError(INVALID_LOGIN_CREDENTIALS_MESSAGE)
 
         user.backend = "django.contrib.auth.backends.ModelBackend"
         cleaned_data["user"] = user
@@ -72,19 +80,19 @@ class UserProfileForm(forms.ModelForm):
         phone = self.cleaned_data.get("phone")
 
         if not phone:
-            raise forms.ValidationError("Телефон обязателен")
+            raise forms.ValidationError(PHONE_REQUIRED_MESSAGE)
 
         normalized_phone = normalize_phone(phone)
 
         if not is_valid_phone(normalized_phone):
-            raise forms.ValidationError("Invalid phone format")
+            raise forms.ValidationError(INVALID_PHONE_MESSAGE)
 
         users_queryset = User.objects.all()
         if self.instance.pk:
             users_queryset = users_queryset.exclude(pk=self.instance.pk)
 
         if users_queryset.filter(phone=normalized_phone).exists():
-            raise forms.ValidationError("Phone already exists")
+            raise forms.ValidationError(PHONE_EXISTS_MESSAGE)
 
         return normalized_phone
 
@@ -92,7 +100,7 @@ class UserProfileForm(forms.ModelForm):
         url = self.cleaned_data.get("github_url")
 
         if not is_github_url(url):
-            raise forms.ValidationError("Invalid GitHub URL")
+            raise forms.ValidationError(INVALID_GITHUB_URL_MESSAGE)
 
         return url
 
@@ -125,7 +133,7 @@ class AdminUserCreationForm(forms.ModelForm):
         password2 = self.cleaned_data.get("password2")
 
         if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords don't match")
+            raise forms.ValidationError(PASSWORDS_DONT_MATCH_MESSAGE)
 
         return password2
 

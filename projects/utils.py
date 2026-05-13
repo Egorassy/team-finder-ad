@@ -12,7 +12,11 @@ def is_valid_github_url(url: str) -> bool:
     return bool(re.match(GITHUB_URL_REGEX, url))
 
 
-def paginate_queryset(request, queryset, page_size: int = PAGINATION_PAGE_SIZE):
+def paginate_queryset(
+    request,
+    queryset,
+    page_size: int = PAGINATION_PAGE_SIZE,
+):
     paginator = Paginator(queryset, page_size)
     return paginator.get_page(request.GET.get("page"))
 

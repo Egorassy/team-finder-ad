@@ -19,7 +19,11 @@ from projects.services import (
 from projects.utils import build_query_prefix, paginate_queryset
 from skills.models import Skill
 from skills.services import search_skills
-from team_finder.constants import PROJECT_STATUS_CLOSED, PROJECT_STATUS_OPEN
+from team_finder.constants import (
+    PROJECT_STATUS_CLOSED,
+    PROJECT_STATUS_OPEN,
+    PROJECT_CLOSED_MESSAGE,
+)
 
 
 def _json_error(message: str, status_code: HTTPStatus):
@@ -125,10 +129,14 @@ def toggle_participate_view(request, pk):
         return _json_error("Authentication required", HTTPStatus.UNAUTHORIZED)
 
     project = get_object_or_404(Project, pk=pk)
-    try:
-        participant = toggle_participation(project, request.user)
-    except ValueError:
-        return _json_error("Project is closed", HTTPStatus.BAD_REQUEST)
+
+    if project.status == PROJECT_STATUS_CLOSED:
+        return _json_error(
+            PROJECT_CLOSED_MESSAGE,
+            HTTPStatus.BAD_REQUEST,
+        )
+
+    participant = toggle_participation(project, request.user)
 
     return JsonResponse({
         "status": "ok",

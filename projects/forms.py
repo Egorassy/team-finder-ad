@@ -2,6 +2,7 @@ from django import forms
 
 from projects.models import Project
 from projects.utils import is_valid_github_url
+from team_finder.constants import INVALID_GITHUB_URL_MESSAGE
 
 
 class ProjectForm(forms.ModelForm):
@@ -19,6 +20,6 @@ class ProjectForm(forms.ModelForm):
         url = self.cleaned_data.get("github_url")
 
         if not is_valid_github_url(url):
-            raise forms.ValidationError("Invalid GitHub URL")
+            raise forms.ValidationError(INVALID_GITHUB_URL_MESSAGE)
 
         return url

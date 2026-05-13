@@ -20,7 +20,7 @@ def register_view(request):
         if form.is_valid():
             user = create_user_from_form(form)
             login(request, user)
-            return redirect("/projects/list/")
+            return redirect("users:list")
     else:
         form = RegisterForm()
 
@@ -36,7 +36,7 @@ def login_view(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             login(request, form.cleaned_data["user"])
-            return redirect("/projects/list/")
+            return redirect("users:list")
     else:
         form = LoginForm()
 
@@ -49,7 +49,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("/projects/list/")
+    return redirect("users:list")
 
 
 def user_detail_view(request, pk):
