@@ -55,7 +55,9 @@ def complete_project(project: Project):
     project.save(update_fields=["status"])
 
 
-def add_skill_to_project(project: Project, skill: Skill) -> tuple[int, bool, bool]:
+def add_skill_to_project(
+    project: Project, skill: Skill
+) -> tuple[int, bool, bool]:
     created = False
 
     if project.skills.filter(pk=skill.pk).exists():

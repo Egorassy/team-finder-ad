@@ -2,6 +2,7 @@ import re
 import secrets
 
 from django.core.paginator import Paginator
+
 from team_finder.constants import (
     GITHUB_URL_REGEX,
     PAGINATION_PAGE_SIZE,

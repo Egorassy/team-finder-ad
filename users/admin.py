@@ -13,8 +13,28 @@ class UserAdmin(BaseUserAdmin):
 
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        ("Personal info", {"fields": ("name", "surname", "phone", "avatar", "github_url", "about")}),
-        ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
+        (
+            "Personal info",
+            {"fields": (
+                "name",
+                "surname",
+                "phone",
+                "avatar",
+                "github_url",
+                "about"
+            )},
+        ),
+        (
+            "Permissions",
+            {
+                "fields": (
+                    "is_staff",
+                    "is_active",
+                    "groups",
+                    "user_permissions",
+                )
+            },
+        ),
     )
 
     add_fieldsets = (

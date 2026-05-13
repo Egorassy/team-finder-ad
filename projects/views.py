@@ -41,7 +41,11 @@ def project_list_view(request):
 
     page_obj = paginate_queryset(request, projects_queryset)
     all_skills = Skill.objects.order_by("name")
-    query_prefix = build_query_prefix({"skill": active_skill.name}) if active_skill else ""
+    query_prefix = (
+        build_query_prefix({"skill": active_skill.name})
+        if active_skill
+        else ""
+    )
 
     return render(
         request,

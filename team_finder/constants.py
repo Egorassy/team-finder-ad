@@ -1,14 +1,9 @@
-# team_finder/constants.py
 from decouple import config
 
-
-# AUTH / ENV SETTINGS
 
 DJANGO_DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 TASK_VERSION = config("TASK_VERSION", default="3")
 
-
-# USER VALIDATION
 
 USER_NAME_MAX_LENGTH = 124
 USER_SURNAME_MAX_LENGTH = 124
@@ -22,10 +17,10 @@ PHONE_COUNTRY_CODE_PREFIX = "+7"
 PHONE_DIGITS_COUNT = 10
 
 PHONE_REGEX = r"^(8|\+7)\d{10}$"
-GITHUB_URL_REGEX = r"^https?:\/\/(www\.)?github\.com\/[\w\-\.]+(\/[\w\-\.]+)?\/?$"
+GITHUB_URL_REGEX = (
+    r"^https?:\/\/(www\.)?github\.com\/[\w\-\.]+(\/[\w\-\.]+)?\/?$"
+)
 
-
-# PROJECT RULES
 
 PROJECT_NAME_MAX_LENGTH = 200
 PROJECT_STATUS_MAX_LENGTH = 6
@@ -39,13 +34,9 @@ PROJECT_STATUS_CHOICES = [
 ]
 
 
-# SKILL RULES
-
 SKILL_NAME_MAX_LENGTH = 124
 SKILL_AUTOCOMPLETE_LIMIT = 10
 
-
-# AVATAR
 
 AVATAR_IMAGE_SIZE = 256
 AVATAR_TEXT_FONT_SIZE = 128
@@ -69,8 +60,6 @@ AVATAR_BG_COLORS = [
     AVATAR_BG_COLOR_STONE,
 ]
 
-
-# QUERY / PAGINATION
 
 DEFAULT_ORDERING_DESC = "-created_at"
 DEFAULT_ORDERING_ASC = "id"

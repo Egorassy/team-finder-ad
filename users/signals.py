@@ -2,6 +2,7 @@ import io
 import random
 import uuid
 import os
+from typing import cast
 
 from PIL import Image, ImageDraw, ImageFont
 from django.core.files.base import ContentFile
@@ -21,7 +22,12 @@ from users.models import User
 
 def _hex_to_rgb(color: str) -> tuple[int, int, int]:
     color = color.lstrip("#")
-    return tuple(int(color[index:index + 2], 16) for index in (0, 2, 4))
+
+    red = int(color[0:2], 16)
+    green = int(color[2:4], 16)
+    blue = int(color[4:6], 16)
+
+    return red, green, blue
 
 
 def _get_text_color(background_color: str) -> str:
@@ -52,9 +58,18 @@ def _build_avatar_bytes(initial: str) -> bytes:
     )
 
     try:
-        font = ImageFont.truetype(font_path, AVATAR_TEXT_FONT_SIZE)
+        font = cast(
+            ImageFont.ImageFont,
+            ImageFont.truetype(
+                font_path,
+                AVATAR_TEXT_FONT_SIZE,
+            ),
+        )
     except OSError:
-        font = ImageFont.load_default()
+        font = cast(
+            ImageFont.ImageFont,
+            ImageFont.load_default(),
+        )
 
     text = (initial or "U")[0].upper()
     bbox = draw.textbbox((0, 0), text, font=font)

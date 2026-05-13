@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import path
 
 from projects.views import (
     add_project_skill_view,
