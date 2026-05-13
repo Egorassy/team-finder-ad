@@ -19,7 +19,7 @@ from projects.services import (
 from projects.utils import build_query_prefix, paginate_queryset
 from skills.models import Skill
 from skills.services import search_skills
-from team_finder.constants import PROJECT_STATUS_CLOSED
+from team_finder.constants import PROJECT_STATUS_CLOSED, PROJECT_STATUS_OPEN
 
 
 def _json_error(message: str, status_code: HTTPStatus):
@@ -141,7 +141,7 @@ def complete_project_view(request, pk):
     if project.owner != request.user:
         return _json_error("Forbidden", HTTPStatus.FORBIDDEN)
 
-    if project.status != "open":
+    if project.status != PROJECT_STATUS_OPEN:
         return _json_error("Project is already closed", HTTPStatus.BAD_REQUEST)
 
     complete_project(project)

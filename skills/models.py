@@ -8,3 +8,7 @@ class Skill(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Навык"
+        verbose_name_plural = "Навыки"

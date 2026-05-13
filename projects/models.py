@@ -43,6 +43,8 @@ class Project(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        verbose_name = "Проект"
+        verbose_name_plural = "Проекты"
 
     def __str__(self):
         return self.name

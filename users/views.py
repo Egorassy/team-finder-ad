@@ -25,7 +25,7 @@ def register_view(request):
 
     return render(
         request,
-        "users/register.html",
+        "includes/users/register.html",
         {"form": form},
     )
 
@@ -91,7 +91,7 @@ def edit_profile_view(request):
             instance=request.user,
         )
         if form.is_valid():
-            update_user_profile(form)
+            update_user_profile(request.user, form)
             return redirect(f"/users/{request.user.id}/")
     else:
         form = UserProfileForm(instance=request.user)

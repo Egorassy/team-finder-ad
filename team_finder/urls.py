@@ -1,8 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from django.shortcuts import redirect
 
-from team_finder.views import root_redirect
+
+def root_redirect(request):
+    return redirect("/projects/list/")
+
 
 urlpatterns = [
     path("", root_redirect),
@@ -11,3 +16,6 @@ urlpatterns = [
     path("projects/", include("projects.urls")),
     path("skills/", include("skills.urls")),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
