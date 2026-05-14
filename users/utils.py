@@ -9,6 +9,7 @@ from team_finder.constants import (
     PHONE_COUNTRY_CODE_PREFIX,
     PHONE_DIGITS_COUNT,
     PHONE_NATIONAL_PREFIX,
+    PHONE_RANDOM_DIGIT_LIMIT,
     PHONE_REGEX,
 )
 
@@ -38,7 +39,7 @@ def generate_placeholder_phone() -> str:
 
     while True:
         digits_part = "".join(
-            str(secrets.randbelow(10))
+            str(secrets.randbelow(PHONE_RANDOM_DIGIT_LIMIT))
             for _ in range(PHONE_DIGITS_COUNT)
         )
         phone = f"{PHONE_COUNTRY_CODE_PREFIX}{digits_part}"
@@ -47,6 +48,8 @@ def generate_placeholder_phone() -> str:
             return phone
 
 
-def paginate_queryset(request, queryset, page_size: int = PAGINATION_PAGE_SIZE):
+def paginate_queryset(
+    request, queryset, page_size: int = PAGINATION_PAGE_SIZE
+):
     paginator = Paginator(queryset, page_size)
     return paginator.get_page(request.GET.get("page"))

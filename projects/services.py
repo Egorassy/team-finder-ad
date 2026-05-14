@@ -4,7 +4,6 @@ from projects.models import Project
 from skills.models import Skill
 from team_finder.constants import (
     PROJECT_STATUS_CLOSED,
-    PROJECT_CLOSED_ERROR_MESSAGE,
 )
 
 User = get_user_model()

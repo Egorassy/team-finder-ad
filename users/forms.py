@@ -4,20 +4,21 @@ from django.contrib.auth.forms import (
     ReadOnlyPasswordHashField,
 )
 
+from team_finder.constants import (
+    ABOUT_TEXTAREA_ROWS,
+    INVALID_GITHUB_URL_MESSAGE,
+    INVALID_LOGIN_CREDENTIALS_MESSAGE,
+    INVALID_PHONE_MESSAGE,
+    PASSWORDS_DONT_MATCH_MESSAGE,
+    PHONE_EXISTS_MESSAGE,
+    PHONE_REQUIRED_MESSAGE,
+)
 from users.models import User
 from users.utils import (
     generate_placeholder_phone,
     is_github_url,
     is_valid_phone,
     normalize_phone,
-)
-from team_finder.constants import (
-    INVALID_PHONE_MESSAGE,
-    PHONE_REQUIRED_MESSAGE,
-    PHONE_EXISTS_MESSAGE,
-    INVALID_GITHUB_URL_MESSAGE,
-    PASSWORDS_DONT_MATCH_MESSAGE,
-    INVALID_LOGIN_CREDENTIALS_MESSAGE,
 )
 
 
@@ -73,7 +74,9 @@ class UserProfileForm(forms.ModelForm):
             "github_url": "Ссылка на GitHub",
         }
         widgets = {
-            "about": forms.Textarea(attrs={"rows": 4}),
+            "about": forms.Textarea(
+                attrs={"rows": ABOUT_TEXTAREA_ROWS},
+            ),
         }
 
     def clean_phone(self):

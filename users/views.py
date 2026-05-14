@@ -1,7 +1,11 @@
+from http import HTTPStatus
+
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
+from django.http import JsonResponse
 
+from team_finder.constants import DEFAULT_ORDERING_ASC, USER_NOT_FOUND_MESSAGE
 from users.forms import (
     ChangePasswordForm,
     LoginForm,
@@ -11,7 +15,6 @@ from users.forms import (
 from users.models import User
 from users.services import create_user_from_form, update_user_profile
 from users.utils import paginate_queryset
-from team_finder.constants import DEFAULT_ORDERING_ASC
 
 
 def register_view(request):
@@ -53,13 +56,16 @@ def logout_view(request):
 
 
 def user_detail_view(request, pk):
-    user = get_object_or_404(
-        User.objects.prefetch_related(
-            "owned_projects__participants",
-            "owned_projects__skills",
-        ),
-        pk=pk,
-    )
+    user = User.objects.prefetch_related(
+        "owned_projects__participants",
+        "owned_projects__skills",
+    ).filter(pk=pk).first()
+
+    if user is None:
+        return JsonResponse(
+            {"status": "error", "message": USER_NOT_FOUND_MESSAGE},
+            status=HTTPStatus.NOT_FOUND,
+        )
 
     return render(
         request,
@@ -93,7 +99,7 @@ def edit_profile_view(request):
         )
         if form.is_valid():
             update_user_profile(request.user, form)
-            return redirect(f"/users/{request.user.id}/")
+            return redirect("users:detail", pk=request.user.pk)
     else:
         form = UserProfileForm(instance=request.user)
 
@@ -117,7 +123,7 @@ def change_password_view(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
-            return redirect(f"/users/{request.user.id}/")
+            return redirect("users:detail", pk=request.user.pk)
     else:
         form = ChangePasswordForm(user=request.user)
 

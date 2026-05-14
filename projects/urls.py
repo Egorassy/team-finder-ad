@@ -12,17 +12,24 @@ from projects.views import (
     toggle_participate_view,
 )
 
+app_name = "projects"
+
 urlpatterns = [
-    path("list/", project_list_view),
-    path("create-project/", create_project_view),
-    path("<int:pk>/edit/", edit_project_view),
-    path("<int:pk>/", project_detail_view),
-
-    path("<int:pk>/toggle-participate/", toggle_participate_view),
-    path("<int:pk>/complete/", complete_project_view),
-
-    path("skills/", project_skill_autocomplete),
-
-    path("<int:pk>/skills/add/", add_project_skill_view),
-    path("<int:pk>/skills/<int:skill_id>/remove/", remove_project_skill_view),
+    path("list/", project_list_view, name="list"),
+    path("create-project/", create_project_view, name="create"),
+    path("<int:pk>/", project_detail_view, name="detail"),
+    path("<int:pk>/edit/", edit_project_view, name="edit"),
+    path(
+        "<int:pk>/toggle-participate/",
+        toggle_participate_view,
+        name="toggle_participate",
+    ),
+    path("<int:pk>/complete/", complete_project_view, name="complete"),
+    path("skills/", project_skill_autocomplete, name="skill_autocomplete"),
+    path("<int:pk>/skills/add/", add_project_skill_view, name="add_skill"),
+    path(
+        "<int:pk>/skills/<int:skill_id>/remove/",
+        remove_project_skill_view,
+        name="remove_skill",
+    ),
 ]

@@ -21,6 +21,13 @@ from team_finder.constants import (
     BRIGHTNESS_BLUE_WEIGHT,
     BRIGHTNESS_DIVISOR,
     BRIGHTNESS_THRESHOLD,
+    HEX_RED_START,
+    HEX_RED_END,
+    HEX_GREEN_START,
+    HEX_GREEN_END,
+    HEX_BLUE_START,
+    HEX_BLUE_END,
+    HEX_BASE
 )
 from users.models import User
 
@@ -28,9 +35,18 @@ from users.models import User
 def _hex_to_rgb(color: str) -> tuple[int, int, int]:
     color = color.lstrip("#")
 
-    red = int(color[0:2], 16)
-    green = int(color[2:4], 16)
-    blue = int(color[4:6], 16)
+    red = int(
+        color[HEX_RED_START:HEX_RED_END],
+        HEX_BASE,
+    )
+    green = int(
+        color[HEX_GREEN_START:HEX_GREEN_END],
+        HEX_BASE,
+    )
+    blue = int(
+        color[HEX_BLUE_START:HEX_BLUE_END],
+        HEX_BASE,
+    )
 
     return red, green, blue
 
